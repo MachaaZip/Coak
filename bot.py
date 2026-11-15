@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-CPM TOOL - Saf Telegram Botu (Web Panelsiz)
-Çalıştırma: python gowa.py
+CPM TOOL - Sade Telegram Botu
+Çalıştırma: python bot.py
 Gerekli: pip install pycryptodome brotli requests urllib3 certifi pyTelegramBotAPI
 """
 
@@ -56,13 +56,12 @@ except ImportError:
 
 BOT_TOKEN = "8267489409:AAEHjA6_xNq8wQ2en_HrQaSjrT44O6QhDAE"
 CONTACT_USERNAME = "deep_oq"
-CHANNEL_URL = "https://t.me/+ryhagfsW9fsyYmE0"
 
-# ADMIN ID
 ADMIN_ID = 8984033559
 
-FREE_DAILY_CLONE_LIMIT = 2
+FREE_TRIAL_CLONE_LIMIT = 1
 PAID_DAILY_CLONE_LIMIT = 20
+ADMIN_DAILY_CLONE_LIMIT = 9999
 
 FIREBASE_API_KEY = "AIzaSyBxDbYXBlWGRVYkmm4XVgvVi487jfsa-Ug"
 FIREBASE_PROJECT = "cpmtool-de966"
@@ -74,8 +73,6 @@ SAVE_URL = "https://europe-west1-cp-multiplayer.cloudfunctions.net/SavePlayerRec
 CPM_EU = "https://europe-west1-cp-multiplayer.cloudfunctions.net"
 CPM_CARS_FETCH_URL = f"{CPM_EU}/GetAllCars2"
 CPM_CARS_SAVE_URL = f"{CPM_EU}/SaveCarsPartially8"
-RANK_API_URL = "https://cpm1-6nmh.onrender.com/rank"
-RANK_COUNT_URL = "https://cpmgg20.free.nf/count/count.php?action=add&script=success"
 
 GAME_HEADERS = {
     "Accept": "*/*", "Accept-Encoding": "gzip", "Content-Type": "application/json",
@@ -88,182 +85,111 @@ os.makedirs(DB_DIR, exist_ok=True)
 DB_PATH = os.path.join(DB_DIR, "cpm_tokens.db")
 LICENSE_DB_PATH = os.path.join(DB_DIR, "cpm_licenses.db")
 USER_SETTINGS_DB_PATH = os.path.join(DB_DIR, "cpm_user_settings.db")
+CONFIG_DB_PATH = os.path.join(DB_DIR, "cpm_config.db")
 
 # ═══════════════════════════════════════════════════════════
-# ÇEVİRİLER (i18n)
+# ÇEVİRİLER
 # ═══════════════════════════════════════════════════════════
 
 TRANSLATIONS = {
     "tr": {
-        "welcome": "🤍 <b>CPM ACCOUNT STUDIO</b> 🤍\n\n<code>━━━━━━━━━━━━━━━━━━</code>\n<b>HESAP KOPYALAMA MERKEZİ</b>\nCar Parking Multiplayer hesaplarınız için sade ve şık kopyalama paneli.\n\nAşağıdan devam etmek istediğiniz işlemi seçin.\n<code>━━━━━━━━━━━━━━━━━━</code>",
-        "key_required": "🔐 <b>Lisans Anahtarı Gerekli</b>\n\nBotu kullanabilmek için geçerli bir lisans anahtarına ihtiyacınız var.\n\n📞 Temin etmek için: @{contact}\n\nAnahtarı aşağıya yazın:\nÖrnek: <code>CPM-XXXX-XXXX</code>",
-        "menu_tool": "💎 Para / Coin / King Rank",
-        "menu_clone": "🚀 Hesap Kopyalama (Clone)",
-        "menu_settings": "⚙️ Dil Ayarları",
-        "menu_contact": "📞 Destek / İletişim",
-        "menu_change_lang": "🌐 Dil Değiştir / Change Language",
-        "menu_back": "🔙 Ana Menüye Dön",
-        "menu_logout": "🚪 Hesaptan Çıkış Yap",
-        "menu_money": "💵 Para Ekle (+)",
-        "menu_coin": "🪙 Coin Ekle (+)",
-        "menu_rank": "👑 King Rank Gönder",
-        "lang_select": "🤍 <b>DİL SEÇİN / SELECT LANGUAGE / ВЫБЕРИТЕ ЯЗЫК</b>",
-        "enter_game_email": "📧 Lütfen CPM oyun hesabınızın <b>E-posta</b> adresini girin:",
-        "enter_game_pass": "✅ E-posta onaylandı.\n🔑 Lütfen oyun <b>Şifrenizi</b> girin:",
-        "login_success": "🚀 <b>Giriş Başarılı!</b>\n\n👤 İsim: <code>{name}</code>\n🆔 UID: <code>{uid}</code>\n💵 Para: <code>{money:,}</code>\n🪙 Coin: <code>{coin:,}</code>\n\nYapmak istediğiniz işlemi seçin:",
-        "login_fail": "❌ Giriş başarısız:\n<code>{err}</code>",
-        "connecting": "⏳ Oyun hesabına bağlanılıyor ve veriler şifrelenip çözülüyor, lütfen bekleyin...",
-        "enter_money": "💵 Eklenecek <b>Para Miktarını</b> yazın (Örn: <code>1000000</code>):",
-        "enter_coin": "🪙 Eklenecek <b>Coin Miktarını</b> yazın (Örn: <code>1000</code>):",
-        "enter_number": "❌ Lütfen geçerli bir sayı girin.",
-        "must_be_positive": "❌ Miktar 0'dan büyük olmalıdır.",
-        "saving": "⏳ Sunucuya güvenli şekilde kaydediliyor...",
-        "save_success": "✨ <b>İşlem Başarılı!</b>\n\nYeni {type}: <code>{val:,}</code>",
-        "save_fail": "❌ Kayıt hatası: <code>{err}</code>",
-        "rank_sending": "👑 King Rank yüklemesi başlatıldı, bekleniyor...",
-        "rank_success": "👑 <b>King Rank Başarıyla Yüklendi!</b>\n{msg}",
-        "rank_fail": "❌ Rank Hatası: <code>{msg}</code>",
-        "enter_clone_email": "🤍 Kopyalamak istediğiniz ve size ait olan kaynak hesabın <b>e-posta</b> adresini girin:",
-        "enter_clone_pass": "✅ E-posta alındı.\n🤍 Kaynak hesabın <b>şifresini</b> girin:",
-        "enter_clone_count": "🤍 Kaç adet kopya oluşturulsun? <b>En fazla: {max}</b>\nLütfen sayı girin:",
-        "clone_invalid_count": "❌ Miktar 1 ile {max} arasında olmalıdır.",
-        "clone_started": "🤍 <b>KOPYALAMA BAŞLATILDI</b>\n({count} adet hesap oluşturuluyor)\nİşlem sürerken lütfen başka bir işlem yapmayın...\n\n⏳ <i>0/{count}</i>",
-        "clone_progress": "🚀 <b>Clone İşlemi Sürüyor...</b>\n\n⏳ <i>{done}/{total} tamamlandı</i>",
-        "clone_done": "🎉 <b>Clone İşlemi Tamamlandı!</b>\n\n✅ Başarılı: {success}/{total}\n\n📁 Hesaplar .txt dosyası olarak gönderiliyor...",
-        "clone_none": "❌ Hiçbir hesap kopyalanamadı.",
-        "clone_error": "❌ Clone sırasında kritik hata: <code>{err}</code>",
-        "clone_cars_fail": "❌ Kaynak hesaptan araçlar çekilemedi.",
-        "clone_login_fail": "❌ Kaynak hesap girişi başarısız: <code>{err}</code>",
-        "clone_doc_caption": "✅ {success} adet hesap başarıyla kopyalandı ve oluşturuldu.",
-        "daily_limit_reached": "⚠️ <b>Günlük Limit Doldu!</b>\n\nBugünkü kopyalama limitiniz bitti (Maks: {limit}).\nSınırsız ve ayrıcalıklı kullanım için: @{contact}",
-        "cancel": "❌ İptal Et",
+        "welcome": "<b>CPM ACCOUNT STUDIO</b>\n\nHesap kopyalama paneli.\n\nAşağıdan işlem seçin.",
+        "welcome_new": "<b>CPM ACCOUNT STUDIO</b>\n\nHoş geldin. Sana <b>1 ücretsiz hesap kopyalama</b> hakkı tanımlandı.\n\nBu hakkı kullandıktan sonra devam etmek için lisans gerekir.",
+        "trial_used": "Ücretsiz kopyalama hakkını kullandın.\n\nDevam etmek için lisans gerekli.\nDestek: @{contact}",
+        "key_required": "<b>Lisans Gerekli</b>\n\nBotu kullanmaya devam etmek için geçerli bir lisans anahtarına ihtiyacın var.\n\nDestek: @{contact}\n\nAnahtarı aşağıya yaz:\nÖrnek: <code>CPM-XXXX-XXXX</code>",
+        "menu_clone": "Hesap Kopyala",
+        "menu_contact": "Destek",
+        "menu_change_lang": "Dil Değiştir",
+        "menu_back": "Ana Menü",
+        "lang_select": "<b>Dil Seçin</b>",
+        "enter_clone_email": "Kopyalanacak kaynak hesabın e-posta adresini gir:",
+        "enter_clone_pass": "E-posta alındı.\nKaynak hesabın şifresini gir:",
+        "enter_clone_count": "Kaç kopya oluşturulsun? (En fazla: {max})",
+        "enter_number": "Geçerli bir sayı gir.",
+        "clone_invalid_count": "Miktar 1 ile {max} arasında olmalı.",
+        "clone_started": "<b>Kopyalama Başlatıldı</b>\n({count} hesap oluşturuluyor)\nİşlem sürerken bekle...\n\n0/{count}",
+        "clone_progress": "<b>Kopyalama Sürüyor...</b>\n\n{done}/{total} tamamlandı",
+        "clone_done": "<b>Kopyalama Tamamlandı</b>\n\nBaşarılı: {success}/{total}\n\nHesaplar .txt olarak gönderiliyor...",
+        "clone_none": "Hiçbir hesap kopyalanamadı.",
+        "clone_error": "Kopyalama sırasında hata: <code>{err}</code>",
+        "clone_cars_fail": "Kaynak hesaptan araçlar çekilemedi.",
+        "clone_login_fail": "Kaynak hesap girişi başarısız: <code>{err}</code>",
+        "clone_doc_caption": "{success} hesap başarıyla oluşturuldu.",
+        "daily_limit_reached": "<b>Günlük Limit Doldu</b>\n\nBugünkü kopyalama limitin bitti (Maks: {limit}).\nDestek: @{contact}",
+        "cancel": "İptal",
         "cancelled": "İşlem iptal edildi.",
-        "use_buttons": "Lütfen menüdeki interaktif butonları kullanın.",
-        "contact_info": "📞 Destek Hattı: @{contact}",
-        "logout_done": "🚪 Oyun hesabından güvenli çıkış yapıldı.",
-        "already_logged_in": "🔐 Zaten giriş yapmış durumdasınız: <b>{name}</b>\nAşağıdaki menüden devam edebilirsiniz:",
-        "login_first": "⚠️ Önce oyun hesabınıza giriş yapmalısınız.",
-        "invalid_key": "❌ <b>Geçersiz Lisans!</b>\n{msg}\n\nDestek için: @{contact}",
-        "license_deleted": "🔄 Lisans anahtarınız sıfırlandı. Yeni lisans anahtarınızı girin:",
-        "settings_menu": "⚙️ <b>Dil Ayarları Menüsü</b>\n\nLütfen tercih ettiğiniz dili seçin:",
-        "free_key_note": "🎁 <b>Ücretsiz Deneme Sürümü</b>\nGünlük Limit: {limit} hesap.",
-        "paid_key_note": "💎 <b>VIP Premium Lisans</b>\nGünlük Limit: {limit} hesap.",
-        "banned": "🚫 <b>Yasaklandınız!</b>\nBu botu kullanma yetkiniz admin tarafından engellenmiştir.",
-        "channel_sub_required": "📢 <b>Zorunlu Kanal Aboneliği</b>\n\nBotu kullanabilmek için öncelikle kanalımıza katılmanız gerekmektedir!\n\n👉 <a href='{channel_url}'>Kanalımıza Katılmak İçin Tıklayın</a>\n\nKatıldıktan sonra /start komutuna tekrar basın."
+        "use_buttons": "Lütfen menüdeki butonları kullan.",
+        "contact_info": "Destek: @{contact}",
+        "invalid_key": "<b>Geçersiz Lisans</b>\n{msg}\n\nDestek: @{contact}",
+        "settings_menu": "<b>Dil Ayarları</b>\n\nDil seç:",
+        "banned": "<b>Yasaklandın</b>\nBu botu kullanma yetkin admin tarafından engellendi.",
+        "channel_sub_required": "<b>Kanal Aboneliği Gerekli</b>\n\nBotu kullanabilmek için önce kanalımıza katılman gerekiyor.\n\n<a href='{channel_url}'>Kanala Katıl</a>\n\nKatıldıktan sonra /start komutuna tekrar bas.",
     },
     "en": {
-        "welcome": "🤍 <b>CPM ACCOUNT STUDIO</b> 🤍\n\n<code>━━━━━━━━━━━━━━━━━━</code>\n<b>ACCOUNT CLONING CENTER</b>\nA clean and elegant cloning panel for your Car Parking Multiplayer accounts.\n\nChoose an action below.\n<code>━━━━━━━━━━━━━━━━━━</code>",
-        "key_required": "🔐 <b>License Key Required</b>\n\nYou need a valid license key to use this bot.\n\n📞 Contact: @{contact}\n\nEnter your license key below:\nExample: <code>CPM-XXXX-XXXX</code>",
-        "menu_tool": "💎 Money / Coin / King Rank",
-        "menu_clone": "🚀 Clone Account",
-        "menu_settings": "⚙️ Language Settings",
-        "menu_contact": "📞 Support / Contact",
-        "menu_change_lang": "🌐 Change Language",
-        "menu_back": "🔙 Main Menu",
-        "menu_logout": "🚪 Logout",
-        "menu_money": "💵 Add Money (+)",
-        "menu_coin": "🪙 Add Coin (+)",
-        "menu_rank": "👑 Send King Rank",
-        "lang_select": "🤍 <b>SELECT LANGUAGE / DİL SEÇİN / ВЫБЕРИТЕ ЯЗЫК</b>",
-        "enter_game_email": "📧 Please enter your CPM game account <b>Email</b>:",
-        "enter_game_pass": "✅ Email received.\n🔑 Please enter your game <b>Password</b>:",
-        "login_success": "🚀 <b>Login Successful!</b>\n\n👤 Name: <code>{name}</code>\n🆔 UID: <code>{uid}</code>\n💵 Money: <code>{money:,}</code>\n🪙 Coin: <code>{coin:,}</code>\n\nChoose an action:",
-        "login_fail": "❌ Login failed:\n<code>{err}</code>",
-        "connecting": "⏳ Connecting to game account and processing data, please wait...",
-        "enter_money": "💵 Enter <b>Money Amount</b> to add (e.g. <code>1000000</code>):",
-        "enter_coin": "🪙 Enter <b>Coin Amount</b> to add (e.g. <code>1000</code>):",
-        "enter_number": "❌ Please enter a valid number.",
-        "must_be_positive": "❌ Amount must be greater than 0.",
-        "saving": "⏳ Securely saving to server...",
-        "save_success": "✨ <b>Success!</b>\n\nNew {type}: <code>{val:,}</code>",
-        "save_fail": "❌ Save error: <code>{err}</code>",
-        "rank_sending": "👑 King Rank process started...",
-        "rank_success": "👑 <b>King Rank Sent Successfully!</b>\n{msg}",
-        "rank_fail": "❌ Rank Error: <code>{msg}</code>",
-        "enter_clone_email": "🤍 Enter the source account <b>Email</b> you own:",
-        "enter_clone_pass": "✅ Email received.\n🤍 Enter the source account <b>Password</b>:",
-        "enter_clone_count": "🤍 How many copies should be created? <b>Max: {max}</b>\nEnter a number:",
-        "clone_invalid_count": "❌ Amount must be between 1 and {max}.",
-        "clone_started": "🤍 <b>CLONING STARTED</b>\n({count} accounts generating)\nPlease wait and do not perform other actions...\n\n⏳ <i>0/{count}</i>",
-        "clone_progress": "🚀 <b>Clone in Progress...</b>\n\n⏳ <i>{done}/{total} completed</i>",
-        "clone_done": "🎉 <b>Clone Complete!</b>\n\n✅ Success: {success}/{total}\n\n📁 Accounts are being sent as a .txt file...",
-        "clone_none": "❌ No accounts could be cloned.",
-        "clone_error": "❌ Critical error during clone: <code>{err}</code>",
-        "clone_cars_fail": "❌ Could not fetch cars from source account.",
-        "clone_login_fail": "❌ Source account login failed: <code>{err}</code>",
-        "clone_doc_caption": "✅ {success} accounts successfully created.",
-        "daily_limit_reached": "⚠️ <b>Daily Limit Reached!</b>\n\nYou have reached your daily clone limit (Max: {limit}).\nFor unlimited access: @{contact}",
-        "cancel": "❌ Cancel",
+        "welcome": "<b>CPM ACCOUNT STUDIO</b>\n\nAccount cloning panel.\n\nSelect an action below.",
+        "welcome_new": "<b>CPM ACCOUNT STUDIO</b>\n\nWelcome. You have <b>1 free account clone</b> right.\n\nAfter using it, you need a license to continue.",
+        "trial_used": "You used your free clone right.\n\nA license is required to continue.\nSupport: @{contact}",
+        "key_required": "<b>License Required</b>\n\nYou need a valid license key to continue using the bot.\n\nSupport: @{contact}\n\nEnter your key below:\nExample: <code>CPM-XXXX-XXXX</code>",
+        "menu_clone": "Clone Account",
+        "menu_contact": "Support",
+        "menu_change_lang": "Change Language",
+        "menu_back": "Main Menu",
+        "lang_select": "<b>Select Language</b>",
+        "enter_clone_email": "Enter the source account email to clone:",
+        "enter_clone_pass": "Email received.\nEnter the source account password:",
+        "enter_clone_count": "How many copies? (Max: {max})",
+        "enter_number": "Enter a valid number.",
+        "clone_invalid_count": "Amount must be between 1 and {max}.",
+        "clone_started": "<b>Cloning Started</b>\n({count} accounts generating)\nPlease wait...\n\n0/{count}",
+        "clone_progress": "<b>Clone in Progress...</b>\n\n{done}/{total} completed",
+        "clone_done": "<b>Clone Complete</b>\n\nSuccess: {success}/{total}\n\nAccounts are being sent as .txt...",
+        "clone_none": "No accounts could be cloned.",
+        "clone_error": "Error during clone: <code>{err}</code>",
+        "clone_cars_fail": "Could not fetch cars from source account.",
+        "clone_login_fail": "Source account login failed: <code>{err}</code>",
+        "clone_doc_caption": "{success} accounts successfully created.",
+        "daily_limit_reached": "<b>Daily Limit Reached</b>\n\nYou have reached your daily clone limit (Max: {limit}).\nSupport: @{contact}",
+        "cancel": "Cancel",
         "cancelled": "Action cancelled.",
-        "use_buttons": "Please use the interactive menu buttons.",
-        "contact_info": "📞 Support: @{contact}",
-        "logout_done": "🚪 Logged out of game account safely.",
-        "already_logged_in": "🔐 Already logged in: <b>{name}</b>\nYou can continue from the menu below:",
-        "login_first": "⚠️ Please login to your game account first.",
-        "invalid_key": "❌ <b>Invalid License!</b>\n{msg}\n\nSupport: @{contact}",
-        "license_deleted": "🔄 License reset. Enter your new license key:",
-        "settings_menu": "⚙️ <b>Language Settings</b>\n\nPlease select your preferred language:",
-        "free_key_note": "🎁 <b>Free Trial</b>\nDaily Limit: {limit} accounts.",
-        "paid_key_note": "💎 <b>VIP Premium License</b>\nDaily Limit: {limit} accounts.",
-        "banned": "🚫 <b>You are Banned!</b>\nYour access to this bot has been restricted by admin.",
-        "channel_sub_required": "📢 <b>Channel Subscription Required</b>\n\nYou must join our channel to use this bot!\n\n👉 <a href='{channel_url}'>Click Here to Join Our Channel</a>\n\nAfter joining, press /start again."
+        "use_buttons": "Please use the menu buttons.",
+        "contact_info": "Support: @{contact}",
+        "invalid_key": "<b>Invalid License</b>\n{msg}\n\nSupport: @{contact}",
+        "settings_menu": "<b>Language Settings</b>\n\nSelect language:",
+        "banned": "<b>You are Banned</b>\nYour access to this bot has been restricted by admin.",
+        "channel_sub_required": "<b>Channel Subscription Required</b>\n\nYou must join our channel to use this bot.\n\n<a href='{channel_url}'>Join Channel</a>\n\nAfter joining, press /start again.",
     },
     "ru": {
-        "welcome": "🤍 <b>CPM ACCOUNT STUDIO</b> 🤍\n\n<code>━━━━━━━━━━━━━━━━━━</code>\n<b>ЦЕНТР КОПИРОВАНИЯ АККАУНТОВ</b>\nУдобная панель копирования аккаунтов Car Parking Multiplayer.\n\nВыберите действие ниже.\n<code>━━━━━━━━━━━━━━━━━━</code>",
-        "key_required": "🔐 <b>Требуется Лицензионный Ключ</b>\n\nДля использования бота необходим ключ.\n\n📞 Связь: @{contact}\n\nВведите ключ ниже:\nПример: <code>CPM-XXXX-XXXX</code>",
-        "menu_tool": "💎 Деньги / Монеты / King Rank",
-        "menu_clone": "🚀 Клонировать Аккаунт",
-        "menu_settings": "⚙️ Настройки Языка",
-        "menu_contact": "📞 Поддержка",
-        "menu_change_lang": "🌐 Сменить язык",
-        "menu_back": "🔙 Главное Меню",
-        "menu_logout": "🚪 Выйти",
-        "menu_money": "💵 Добавить Деньги (+)",
-        "menu_coin": "🪙 Добавить Монеты (+)",
-        "menu_rank": "👑 Отправить King Rank",
-        "lang_select": "🤍 <b>ВЫБЕРИТЕ ЯЗЫК / SELECT LANGUAGE / DİL SEÇİN</b>",
-        "enter_game_email": "📧 Введите <b>Email</b> игрового аккаунта CPM:",
-        "enter_game_pass": "✅ Email получен.\n🔑 Введите <b>Пароль</b> от игры:",
-        "login_success": "🚀 <b>Вход Успешен!</b>\n\n👤 Имя: <code>{name}</code>\n🆔 UID: <code>{uid}</code>\n💵 Деньги: <code>{money:,}</code>\n🪙 Монеты: <code>{coin:,}</code>\n\nВыберите действие:",
-        "login_fail": "❌ Ошибка входа:\n<code>{err}</code>",
-        "connecting": "⏳ Подключение к аккаунту и обработка данных, подождите...",
-        "enter_money": "💵 Введите <b>сумму денег</b> (напр. <code>1000000</code>):",
-        "enter_coin": "🪙 Введите <b>количество монет</b> (напр. <code>1000</code>):",
-        "enter_number": "❌ Введите корректное число.",
-        "must_be_positive": "❌ Сумма должна быть больше 0.",
-        "saving": "⏳ Безопасное сохранение на сервер...",
-        "save_success": "✨ <b>Успешно!</b>\n\nНовое {type}: <code>{val:,}</code>",
-        "save_fail": "❌ Ошибка сохранения: <code>{err}</code>",
-        "rank_sending": "👑 Процесс King Rank запущен...",
-        "rank_success": "👑 <b>King Rank успешно отправлен!</b>\n{msg}",
-        "rank_fail": "❌ Ошибка Ранга: <code>{msg}</code>",
-        "enter_clone_email": "🚀 Введите <b>Email</b> исходного аккаунта для клонирования:",
-        "enter_clone_pass": "✅ Email получен.\n🤍 Введите <b>пароль</b> исходного аккаунта:",
-        "enter_clone_count": "🤍 Сколько копий создать? <b>Макс: {max}</b>\nВведите число:",
-        "clone_invalid_count": "❌ Количество должно быть от 1 до {max}.",
-        "clone_started": "🤍 <b>КОПИРОВАНИЕ ЗАПУЩЕНО</b>\n({count} аккаунтов создается)\nПожалуйста, не выполняйте другие действия...\n\n⏳ <i>0/{count}</i>",
-        "clone_progress": "🚀 <b>Клонирование в процессе...</b>\n\n⏳ <i>{done}/{total} завершено</i>",
-        "clone_done": "🎉 <b>Клонирование завершено!</b>\n\n✅ Успешно: {success}/{total}\n\n📁 Аккаунты отправляются в виде файла .txt...",
-        "clone_none": "❌ Не удалось клонировать ни одного аккаунта.",
-        "clone_error": "❌ Критическая ошибка: <code>{err}</code>",
-        "clone_cars_fail": "❌ Не удалось получить машины с исходного аккаунта.",
-        "clone_login_fail": "❌ Ошибка входа в исходный аккаунт: <code>{err}</code>",
-        "clone_doc_caption": "✅ Успешно создано аккаунтов: {success}.",
-        "daily_limit_reached": "⚠️ <b>Лимит исчерпан!</b>\n\nВаш дневной лимит клонирования исчерпан (Макс: {limit}).\nДля неограниченного доступа: @{contact}",
-        "cancel": "❌ Отмена",
+        "welcome": "<b>CPM ACCOUNT STUDIO</b>\n\nПанель клонирования аккаунтов.\n\nВыберите действие.",
+        "welcome_new": "<b>CPM ACCOUNT STUDIO</b>\n\nДобро пожаловать. Тебе дано <b>1 бесплатное клонирование</b>.\n\nПосле использования потребуется лицензия.",
+        "trial_used": "Ты использовал бесплатное клонирование.\n\nДля продолжения нужна лицензия.\nПоддержка: @{contact}",
+        "key_required": "<b>Требуется Лицензия</b>\n\nДля использования бота нужен лицензионный ключ.\n\nПоддержка: @{contact}\n\nВведи ключ:\nПример: <code>CPM-XXXX-XXXX</code>",
+        "menu_clone": "Клонировать",
+        "menu_contact": "Поддержка",
+        "menu_change_lang": "Сменить Язык",
+        "menu_back": "Главное Меню",
+        "lang_select": "<b>Выберите Язык</b>",
+        "enter_clone_email": "Введите email исходного аккаунта:",
+        "enter_clone_pass": "Email получен.\nВведите пароль исходного аккаунта:",
+        "enter_clone_count": "Сколько копий? (Макс: {max})",
+        "enter_number": "Введите корректное число.",
+        "clone_invalid_count": "Число должно быть от 1 до {max}.",
+        "clone_started": "<b>Клонирование Запущено</b>\n(создаётся {count} аккаунтов)\nПодожди...\n\n0/{count}",
+        "clone_progress": "<b>Клонирование...</b>\n\n{done}/{total} завершено",
+        "clone_done": "<b>Клонирование Завершено</b>\n\nУспешно: {success}/{total}\n\nАккаунты отправляются как .txt...",
+        "clone_none": "Не удалось клонировать ни один аккаунт.",
+        "clone_error": "Ошибка клонирования: <code>{err}</code>",
+        "clone_cars_fail": "Не удалось получить машины с исходного аккаунта.",
+        "clone_login_fail": "Ошибка входа в исходный аккаунт: <code>{err}</code>",
+        "clone_doc_caption": "Успешно создано аккаунтов: {success}.",
+        "daily_limit_reached": "<b>Лимит Исчерпан</b>\n\nДневной лимит клонирования исчерпан (Макс: {limit}).\nПоддержка: @{contact}",
+        "cancel": "Отмена",
         "cancelled": "Действие отменено.",
-        "use_buttons": "Пожалуйста, используйте интерактивные кнопки меню.",
-        "contact_info": "📞 Поддержка: @{contact}",
-        "logout_done": "🚪 Успешный выход из игрового аккаунта.",
-        "already_logged_in": "🔐 Вы уже вошли: <b>{name}</b>\nМожете продолжить из меню ниже:",
-        "login_first": "⚠️ Сначала войдите в свой игровой аккаунт.",
-        "invalid_key": "❌ <b>Неверная лицензия!</b>\n{msg}\n\nПоддержка: @{contact}",
-        "license_deleted": "🔄 Лицензия сброшена. Введите новый ключ:",
-        "settings_menu": "⚙️ <b>Настройки Языка</b>\n\nВыберите желаемый язык:",
-        "free_key_note": "🎁 <b>Бесплатная версия</b>\nЛимит в день: {limit} аккаунтов.",
-        "paid_key_note": "💎 <b>VIP Премиум Лицензия</b>\nЛимит в день: {limit} аккаунтов.",
-        "banned": "🚫 <b>Вы заблокированы!</b>\nАдминистратор ограничил ваш доступ к этому боту.",
-        "channel_sub_required": "📢 <b>Требуется Подписка на Канал</b>\n\nДля использования бота вы должны подписаться на наш канал!\n\n👉 <a href='{channel_url}'>Нажмите для Подписки</a>\n\nПосле подписки нажмите /start снова."
+        "use_buttons": "Используй кнопки меню.",
+        "contact_info": "Поддержка: @{contact}",
+        "invalid_key": "<b>Неверная Лицензия</b>\n{msg}\n\nПоддержка: @{contact}",
+        "settings_menu": "<b>Настройки Языка</b>\n\nВыберите язык:",
+        "banned": "<b>Ты Заблокирован</b>\nДоступ ограничен администратором.",
+        "channel_sub_required": "<b>Требуется Подписка на Канал</b>\n\nДля использования бота подпишись на канал.\n\n<a href='{channel_url}'>Подписаться</a>\n\nПосле подписки нажми /start.",
     }
 }
 
@@ -275,7 +201,61 @@ def t(lang, key, **kwargs):
         return text
 
 # ═══════════════════════════════════════════════════════════
-# BAN VE KULLANICI AYARLARI DB
+# CONFIG DB
+# ═══════════════════════════════════════════════════════════
+
+class ConfigDB:
+    def __init__(self, path=CONFIG_DB_PATH):
+        self.path = path
+        self._init()
+
+    def _init(self):
+        with sqlite3.connect(self.path) as c:
+            c.execute("""CREATE TABLE IF NOT EXISTS required_channels (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                channel_id TEXT NOT NULL,
+                invite_link TEXT NOT NULL,
+                title TEXT DEFAULT '',
+                added_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                UNIQUE(channel_id)
+            )""")
+            c.execute("""CREATE TABLE IF NOT EXISTS config (
+                key TEXT PRIMARY KEY,
+                value TEXT
+            )""")
+            c.commit()
+
+    def add_channel(self, channel_id, invite_link, title=""):
+        with sqlite3.connect(self.path) as c:
+            c.execute("""INSERT OR REPLACE INTO required_channels
+                (channel_id, invite_link, title) VALUES (?, ?, ?)""",
+                (str(channel_id), invite_link, title))
+            c.commit()
+
+    def remove_channel(self, channel_id):
+        with sqlite3.connect(self.path) as c:
+            c.execute("DELETE FROM required_channels WHERE channel_id = ?", (str(channel_id),))
+            c.commit()
+
+    def list_channels(self):
+        with sqlite3.connect(self.path) as c:
+            rows = c.execute("SELECT channel_id, invite_link, title FROM required_channels ORDER BY id").fetchall()
+        return [{"channel_id": r[0], "invite_link": r[1], "title": r[2] or ""} for r in rows]
+
+    def get_config(self, key, default=None):
+        with sqlite3.connect(self.path) as c:
+            row = c.execute("SELECT value FROM config WHERE key = ?", (key,)).fetchone()
+        return row[0] if row else default
+
+    def set_config(self, key, value):
+        with sqlite3.connect(self.path) as c:
+            c.execute("INSERT OR REPLACE INTO config (key, value) VALUES (?, ?)", (key, str(value)))
+            c.commit()
+
+_config_db = ConfigDB()
+
+# ═══════════════════════════════════════════════════════════
+# KULLANICI DB
 # ═══════════════════════════════════════════════════════════
 
 class UserSettingsDB:
@@ -290,19 +270,28 @@ class UserSettingsDB:
                 lang TEXT DEFAULT 'tr',
                 daily_clone_count INTEGER DEFAULT 0,
                 last_clone_date TEXT,
-                is_banned INTEGER DEFAULT 0
+                total_clone_count INTEGER DEFAULT 0,
+                free_trial_used INTEGER DEFAULT 0,
+                is_banned INTEGER DEFAULT 0,
+                started_bot INTEGER DEFAULT 0,
+                first_start_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
             )""")
-            try:
-                c.execute("ALTER TABLE settings ADD COLUMN is_banned INTEGER DEFAULT 0")
-            except:
-                pass
+            for ddl in [
+                "ALTER TABLE settings ADD COLUMN is_banned INTEGER DEFAULT 0",
+                "ALTER TABLE settings ADD COLUMN free_trial_used INTEGER DEFAULT 0",
+                "ALTER TABLE settings ADD COLUMN total_clone_count INTEGER DEFAULT 0",
+                "ALTER TABLE settings ADD COLUMN started_bot INTEGER DEFAULT 0",
+            ]:
+                try:
+                    c.execute(ddl)
+                except:
+                    pass
             c.commit()
 
     def get_lang(self, chat_id):
         with sqlite3.connect(self.path) as c:
-            cur = c.execute("SELECT lang FROM settings WHERE chat_id = ?", (chat_id,))
-            row = cur.fetchone()
-            return row[0] if row else None
+            row = c.execute("SELECT lang FROM settings WHERE chat_id = ?", (chat_id,)).fetchone()
+        return row[0] if row else None
 
     def set_lang(self, chat_id, lang):
         with sqlite3.connect(self.path) as c:
@@ -314,43 +303,68 @@ class UserSettingsDB:
         if chat_id == ADMIN_ID:
             return False
         with sqlite3.connect(self.path) as c:
-            cur = c.execute("SELECT is_banned FROM settings WHERE chat_id = ?", (chat_id,))
-            row = cur.fetchone()
-            return bool(row[0]) if row else False
+            row = c.execute("SELECT is_banned FROM settings WHERE chat_id = ?", (chat_id,)).fetchone()
+        return bool(row[0]) if row else False
 
-    def set_ban(self, chat_id, status: int):
+    def set_ban(self, chat_id, status):
         with sqlite3.connect(self.path) as c:
             c.execute("INSERT OR IGNORE INTO settings (chat_id, is_banned) VALUES (?, ?)", (chat_id, status))
             c.execute("UPDATE settings SET is_banned = ? WHERE chat_id = ?", (status, chat_id))
             c.commit()
 
+    def mark_started(self, chat_id):
+        with sqlite3.connect(self.path) as c:
+            c.execute("INSERT OR IGNORE INTO settings (chat_id, started_bot) VALUES (?, 1)", (chat_id,))
+            c.execute("UPDATE settings SET started_bot = 1 WHERE chat_id = ?", (chat_id,))
+            c.commit()
+
+    def get_all_started_users(self):
+        with sqlite3.connect(self.path) as c:
+            rows = c.execute("SELECT chat_id FROM settings WHERE started_bot = 1 AND is_banned = 0").fetchall()
+        return [r[0] for r in rows]
+
     def get_daily_clone_count(self, chat_id):
         today = datetime.now(timezone.utc).strftime("%Y-%m-%d")
         with sqlite3.connect(self.path) as c:
-            cur = c.execute("SELECT daily_clone_count, last_clone_date FROM settings WHERE chat_id = ?", (chat_id,))
-            row = cur.fetchone()
-            if not row or row[1] != today:
-                return 0
-            return row[0] or 0
+            row = c.execute("SELECT daily_clone_count, last_clone_date FROM settings WHERE chat_id = ?", (chat_id,)).fetchone()
+        if not row or row[1] != today:
+            return 0
+        return row[0] or 0
+
+    def get_total_clone_count(self, chat_id):
+        with sqlite3.connect(self.path) as c:
+            row = c.execute("SELECT total_clone_count FROM settings WHERE chat_id = ?", (chat_id,)).fetchone()
+        return (row[0] or 0) if row else 0
+
+    def get_free_trial_used(self, chat_id):
+        with sqlite3.connect(self.path) as c:
+            row = c.execute("SELECT free_trial_used FROM settings WHERE chat_id = ?", (chat_id,)).fetchone()
+        return bool(row[0]) if row else False
+
+    def mark_free_trial_used(self, chat_id):
+        with sqlite3.connect(self.path) as c:
+            c.execute("INSERT OR IGNORE INTO settings (chat_id, free_trial_used) VALUES (?, 1)", (chat_id,))
+            c.execute("UPDATE settings SET free_trial_used = 1 WHERE chat_id = ?", (chat_id,))
+            c.commit()
 
     def increment_clone_count(self, chat_id):
         today = datetime.now(timezone.utc).strftime("%Y-%m-%d")
         with sqlite3.connect(self.path) as c:
-            cur = c.execute("SELECT daily_clone_count, last_clone_date FROM settings WHERE chat_id = ?", (chat_id,))
-            row = cur.fetchone()
-            if row and row[1] == today:
-                new_count = (row[0] or 0) + 1
-                c.execute("UPDATE settings SET daily_clone_count = ?, last_clone_date = ? WHERE chat_id = ?",
-                          (new_count, today, chat_id))
+            row = c.execute("SELECT daily_clone_count, last_clone_date, total_clone_count FROM settings WHERE chat_id = ?", (chat_id,)).fetchone()
+            if row:
+                daily = (row[0] or 0) + 1 if row[1] == today else 1
+                total = (row[2] or 0) + 1
+                c.execute("UPDATE settings SET daily_clone_count = ?, last_clone_date = ?, total_clone_count = ? WHERE chat_id = ?",
+                          (daily, today, total, chat_id))
             else:
-                c.execute("INSERT OR REPLACE INTO settings (chat_id, daily_clone_count, last_clone_date) VALUES (?, 1, ?)",
+                c.execute("INSERT INTO settings (chat_id, daily_clone_count, last_clone_date, total_clone_count) VALUES (?, 1, ?, 1)",
                           (chat_id, today))
             c.commit()
 
 _user_settings = UserSettingsDB()
 
 # ═══════════════════════════════════════════════════════════
-# LİSANS VERİTABANI (Düzeltildi)
+# LİSANS DB
 # ═══════════════════════════════════════════════════════════
 
 class LicenseDB:
@@ -370,7 +384,6 @@ class LicenseDB:
                 last_check INTEGER DEFAULT 0,
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
             )""")
-            # Eksik olabilecek kolonlar için migration kontrolü
             try:
                 c.execute("ALTER TABLE licenses ADD COLUMN is_free INTEGER DEFAULT 0")
             except:
@@ -391,12 +404,11 @@ class LicenseDB:
 
     def get(self, chat_id):
         with sqlite3.connect(self.path) as c:
-            cur = c.execute("SELECT api_key, ip, expires_at_ms, is_free, daily_clone_limit FROM licenses WHERE chat_id = ?", (chat_id,))
-            row = cur.fetchone()
-            if not row:
-                return None
-            return {"api_key": row[0], "ip": row[1], "expires_at_ms": row[2],
-                    "is_free": row[3] or 0, "daily_clone_limit": row[4] or 20}
+            row = c.execute("SELECT api_key, ip, expires_at_ms, is_free, daily_clone_limit FROM licenses WHERE chat_id = ?", (chat_id,)).fetchone()
+        if not row:
+            return None
+        return {"api_key": row[0], "ip": row[1], "expires_at_ms": row[2],
+                "is_free": row[3] or 0, "daily_clone_limit": row[4] or 20}
 
     def delete(self, chat_id):
         with sqlite3.connect(self.path) as c:
@@ -412,7 +424,7 @@ class LicenseDB:
 _license_db = LicenseDB()
 
 # ═══════════════════════════════════════════════════════════
-# YARDIMCI & KANAL KONTROL
+# YARDIMCI
 # ═══════════════════════════════════════════════════════════
 
 def get_public_ip():
@@ -430,14 +442,6 @@ def get_public_ip():
         except Exception:
             continue
     return None
-
-def check_channel_membership(chat_id):
-    if chat_id == ADMIN_ID:
-        return True
-    try:
-        return True
-    except Exception:
-        return True
 
 # ═══════════════════════════════════════════════════════════
 # FIRESTORE
@@ -499,7 +503,7 @@ def validate_key(api_key, current_ip, chat_id=None):
     except Exception as e:
         return False, f"Sunucu hatası: {e}", 0, False, 20
     if not doc or "fields" not in doc:
-        return False, f"Anahtar bulunamadı! Destek için @{CONTACT_USERNAME}", 0, False, 20
+        return False, f"Anahtar bulunamadı. Destek: @{CONTACT_USERNAME}", 0, False, 20
 
     f = doc["fields"]
     active = _fs_value(f.get("active", {"booleanValue": True}))
@@ -511,7 +515,7 @@ def validate_key(api_key, current_ip, chat_id=None):
     used_users = _fs_value(f.get("usedUsers", {"arrayValue": {"values": []}})) or []
 
     if not active:
-        return False, f"Bu anahtar devre dışı bırakılmış. @{CONTACT_USERNAME}", 0, False, 20
+        return False, f"Bu anahtar devre dışı. @{CONTACT_USERNAME}", 0, False, 20
     now_ms = int(time.time() * 1000)
     if expires_ms and now_ms > expires_ms:
         return False, f"Anahtar süresi dolmuş. @{CONTACT_USERNAME}", 0, False, 20
@@ -520,7 +524,7 @@ def validate_key(api_key, current_ip, chat_id=None):
         user_str = str(chat_id) if chat_id else current_ip
         if user_str not in used_users:
             if len(used_users) >= user_limit_val:
-                return False, f"Kullanıcı limiti doldu! ({len(used_users)}/{user_limit_val})", 0, False, 20
+                return False, f"Kullanıcı limiti doldu ({len(used_users)}/{user_limit_val})", 0, False, 20
             try:
                 _fs_patch(api_key, {"usedUsers": used_users + [user_str]})
             except Exception as e:
@@ -532,8 +536,8 @@ def validate_key(api_key, current_ip, chat_id=None):
         kalan = f"{kalan_gun} gün"
 
     limit = daily_limit if is_free else PAID_DAILY_CLONE_LIMIT
-    key_type = "Ücretsiz Deneme" if is_free else "VIP Premium"
-    return True, f"Giriş Başarılı! ({key_type}, Kalan Süre: {kalan})", expires_ms, is_free, limit
+    key_type = "Deneme" if is_free else "Premium"
+    return True, f"Lisans doğrulandı ({key_type}, Kalan: {kalan})", expires_ms, is_free, limit
 
 def check_saved_license(chat_id, current_ip):
     saved = _license_db.get(chat_id)
@@ -1001,34 +1005,6 @@ def tool_save_record(auth, fuid, record, force_fields):
         return {"ok": _ok(r.json()), "resp": r.text}
     except Exception as e:
         return {"ok": False, "msg": str(e)}
-
-def tool_king_rank_send(email, password):
-    try:
-        res = requests.post(RANK_API_URL, json={"email": email, "password": password}, timeout=60)
-        data = res.json()
-    except Exception as e:
-        return {"ok": False, "msg": str(e)}
-    if data.get("status") == "success":
-        try:
-            requests.get(RANK_COUNT_URL, timeout=10)
-        except:
-            pass
-        return {"ok": True, "msg": data.get("message", "")}
-    return {"ok": False, "msg": data.get("message", "Hata")}
-
-def tool_do_login_and_get_record(email, password):
-    lg = tool_login(email, password)
-    if not lg.get("ok"):
-        return None, None, None, f"Hata: {lg.get('msg')}"
-    auth, fuid = lg["auth"], lg["fuid"]
-    resp = tool_fetch_record(auth, fuid)
-    enc = tool_find_encrypted(resp)
-    if not enc:
-        return None, None, None, "Veri bulunamadi."
-    dec = by_decrypt_record(enc, fuid, password, email)
-    if not dec.get("success"):
-        return None, None, None, f"Cozulemedi: {dec.get('message')}"
-    return auth, fuid, dec["record"], None
 
 # ═══════════════════════════════════════════════════════════
 # CLONE SİSTEMİ
@@ -1632,7 +1608,7 @@ def cpm1_save_car_status(auth, fuid, car_entries):
 _clone_nuker = CloneDB(DB_PATH)
 
 # ═══════════════════════════════════════════════════════════
-# TELEGRAM BOT & MENÜLER
+# TELEGRAM BOT
 # ═══════════════════════════════════════════════════════════
 
 bot = telebot.TeleBot(BOT_TOKEN, parse_mode="HTML")
@@ -1645,12 +1621,13 @@ def get_session(chat_id):
         USER_SESSIONS[chat_id] = {
             "key_valid": False,
             "is_free": False,
-            "daily_limit": (2_147_483_647 if chat_id == ADMIN_ID else PAID_DAILY_CLONE_LIMIT),
+            "daily_limit": (ADMIN_DAILY_CLONE_LIMIT if chat_id == ADMIN_ID else PAID_DAILY_CLONE_LIMIT),
             "auth": None, "fuid": None, "record": None,
             "email": None, "password": None,
             "name": None, "money": 0, "coin": 0,
             "state": None,
             "clone_results": [],
+            "clone_in_progress": False,
             "lang": _user_settings.get_lang(chat_id) or "tr",
         }
     return USER_SESSIONS[chat_id]
@@ -1659,37 +1636,35 @@ def L(chat_id, key, **kwargs):
     lang = _user_settings.get_lang(chat_id) or "tr"
     return t(lang, key, **kwargs)
 
+# ─── MENÜLER ───
+
 def main_menu_inline(chat_id):
-    """Sade, yalnızca hesap kopyalama odaklı ana menü."""
-    markup = InlineKeyboardMarkup(row_width=1)
-    markup.add(InlineKeyboardButton("🤍  HESAP KOPYALA  🤍", callback_data="menu_clone"))
+    markup = InlineKeyboardMarkup(row_width=2)
+    markup.add(InlineKeyboardButton("Hesap Kopyala", callback_data="menu_clone"))
     markup.add(
-        InlineKeyboardButton("🤍  DİL / LANGUAGE  🤍", callback_data="change_lang"),
-        InlineKeyboardButton("🤍  DESTEK  🤍", callback_data="menu_contact"),
+        InlineKeyboardButton("Dil", callback_data="change_lang"),
+        InlineKeyboardButton("Destek", callback_data="menu_contact"),
     )
     return markup
-
-def tool_menu_inline(chat_id):
-    return main_menu_inline(chat_id)
 
 def lang_menu_inline():
     markup = InlineKeyboardMarkup(row_width=3)
     markup.add(
-        InlineKeyboardButton("🤍 Türkçe", callback_data="lang_tr"),
-        InlineKeyboardButton("🤍 English", callback_data="lang_en"),
-        InlineKeyboardButton("🤍 Русский", callback_data="lang_ru"),
+        InlineKeyboardButton("Türkçe", callback_data="lang_tr"),
+        InlineKeyboardButton("English", callback_data="lang_en"),
+        InlineKeyboardButton("Русский", callback_data="lang_ru"),
     )
-    markup.add(InlineKeyboardButton("🤍 Ana Menü / Main Menu", callback_data="back_main"))
+    markup.add(InlineKeyboardButton("Ana Menü", callback_data="back_main"))
     return markup
 
-def cancel_inline(chat_id):
+def cancel_inline():
     markup = InlineKeyboardMarkup()
-    markup.add(InlineKeyboardButton("🤍 İŞLEMİ İPTAL ET", callback_data="cancel_action"))
+    markup.add(InlineKeyboardButton("İptal", callback_data="cancel_action"))
     return markup
 
-def back_main_inline(chat_id):
+def back_main_inline():
     markup = InlineKeyboardMarkup()
-    markup.add(InlineKeyboardButton("🤍 ANA MENÜ", callback_data="back_main"))
+    markup.add(InlineKeyboardButton("Ana Menü", callback_data="back_main"))
     return markup
 
 def safe_delete_message(chat_id, message_id):
@@ -1698,25 +1673,77 @@ def safe_delete_message(chat_id, message_id):
     except:
         pass
 
-def send_welcome_message(chat_id, key_msg=""):
-    session = get_session(chat_id)
-    limit = session["daily_limit"]
+# ─── KANAL KONTROLÜ (SADECE ÜYELİK) ───
+
+def check_channel_membership(chat_id):
+    """
+    Admin her zaman True.
+    Diğer kullanıcılar için: tüm zorunlu kanallara üye olmalı.
+    Yönetici olma zorunluluğu YOK.
+    """
     if chat_id == ADMIN_ID:
-        note = "🤍 <b>ADMIN:</b> Günlük kopyalama limiti yok."
+        return True, None
+
+    channels = _config_db.list_channels()
+    if not channels:
+        return True, None
+
+    for ch in channels:
+        channel_id = ch["channel_id"]
+        invite_link = ch["invite_link"]
+        try:
+            member = bot.get_chat_member(channel_id, chat_id)
+            status = member.status
+            if status in ("left", "kicked"):
+                return False, ("not_joined", invite_link)
+            # member / administrator / creator / restricted → üye kabul
+        except Exception as e:
+            err = str(e).lower()
+            if any(k in err for k in ("user not found", "participant", "chat not found", "bad request")):
+                return False, ("not_joined", invite_link)
+            print(f"Kanal kontrol hatası ({channel_id}): {e}")
+            continue
+    return True, None
+
+def send_channel_required_message(chat_id, reason, invite_link):
+    text = L(chat_id, "channel_sub_required", channel_url=invite_link)
+    bot.send_message(chat_id, text, disable_web_page_preview=False)
+
+# ─── WELCOME ───
+
+def send_welcome_message(chat_id, note=""):
+    session = get_session(chat_id)
+    if chat_id == ADMIN_ID:
+        extra = "\n\n<b>Admin:</b> Sınırsız erişim aktif."
+    elif session["key_valid"]:
+        if session.get("is_free"):
+            if _user_settings.get_free_trial_used(chat_id):
+                extra = "\n\n" + L(chat_id, "trial_used", contact=CONTACT_USERNAME)
+            else:
+                extra = "\n\n<b>Ücretsiz Hak:</b> 1 hesap kopyalama"
+        else:
+            extra = "\n\n<b>Lisans:</b> Aktif"
     else:
-        note = f"🎁 <b>Deneme Sürümü:</b> Günlük {limit} hesap." if session["is_free"] else f"💎 <b>VIP Premium:</b> Günlük {limit} hesap."
-    text = f"{L(chat_id, 'welcome')}\n\n✅ <b>{key_msg}</b>\n\n{note}"
+        trial_used = _user_settings.get_free_trial_used(chat_id)
+        if not trial_used:
+            extra = "\n\n" + L(chat_id, "welcome_new")
+        else:
+            extra = "\n\n" + L(chat_id, "trial_used", contact=CONTACT_USERNAME)
+    text = L(chat_id, "welcome") + extra
     bot.send_message(chat_id, text, reply_markup=main_menu_inline(chat_id))
 
-# ─── KOMUTLAR: /start, /help, /duyuru, /yasakla, /yasakkaldir ───
+# ═══════════════════════════════════════════════════════════
+# KOMUTLAR
+# ═══════════════════════════════════════════════════════════
 
 @bot.message_handler(commands=['start'])
 def cmd_start(message):
     chat_id = message.chat.id
     if _user_settings.is_banned(chat_id):
-        bot.send_message(chat_id, "🚫 Bu botu kullanmanız yasaklanmıştır.")
+        bot.send_message(chat_id, L(chat_id, "banned"))
         return
 
+    _user_settings.mark_started(chat_id)
     session = get_session(chat_id)
     session["state"] = None
 
@@ -1725,93 +1752,173 @@ def cmd_start(message):
         bot.send_message(chat_id, TRANSLATIONS["tr"]["lang_select"], reply_markup=lang_menu_inline())
         return
 
-    if not check_channel_membership(chat_id):
-        bot.send_message(chat_id, L(chat_id, "channel_sub_required", channel_url=CHANNEL_URL), disable_web_page_preview=True)
+    ok, reason = check_channel_membership(chat_id)
+    if not ok:
+        reason_type, invite_link = reason
+        send_channel_required_message(chat_id, reason_type, invite_link)
+        return
+
+    if chat_id == ADMIN_ID:
+        session["key_valid"] = True
+        session["daily_limit"] = ADMIN_DAILY_CLONE_LIMIT
+        send_welcome_message(chat_id, "admin")
         return
 
     ip = get_public_ip() or "0.0.0.0"
     ok, msg, api_key = check_saved_license(chat_id, ip)
-
     if ok:
         saved = _license_db.get(chat_id)
         if saved:
             session["is_free"] = bool(saved.get("is_free"))
-            session["daily_limit"] = (2_147_483_647 if chat_id == ADMIN_ID else saved.get("daily_clone_limit", PAID_DAILY_CLONE_LIMIT))
+            session["daily_limit"] = saved.get("daily_clone_limit", PAID_DAILY_CLONE_LIMIT)
         session["key_valid"] = True
         send_welcome_message(chat_id, msg)
         return
 
+    trial_used = _user_settings.get_free_trial_used(chat_id)
+    if not trial_used:
+        session["key_valid"] = True
+        session["is_free"] = True
+        session["daily_limit"] = FREE_TRIAL_CLONE_LIMIT
+        send_welcome_message(chat_id, "trial")
+        return
+
     session["key_valid"] = False
-    text = L(chat_id, "key_required", contact=CONTACT_USERNAME)
     session["state"] = "waiting_key"
-    bot.send_message(chat_id, text, reply_markup=cancel_inline(chat_id))
+    bot.send_message(chat_id, L(chat_id, "key_required", contact=CONTACT_USERNAME), reply_markup=cancel_inline())
 
 @bot.message_handler(commands=['duyuru'])
 def cmd_duyuru(message):
-    chat_id = message.chat.id
-    if chat_id != ADMIN_ID:
+    if message.chat.id != ADMIN_ID:
         return
     args = message.text.split(maxsplit=1)
     if len(args) < 2:
-        bot.reply_to(message, "❌ Örnek: <code>/duyuru Merhaba!</code>")
+        bot.reply_to(message, "Örnek: <code>/duyuru Merhaba!</code>")
         return
-    
     ann = args[1]
-    try:
-        with sqlite3.connect(LICENSE_DB_PATH) as c:
-            rows = c.execute("SELECT DISTINCT chat_id FROM licenses").fetchall()
-    except:
-        rows = []
-    
+    users = _user_settings.get_all_started_users()
     count = 0
-    for r in rows:
+    for uid in users:
         try:
-            bot.send_message(r[0], f"📢 <b>DUYURU</b>\n\n{ann}")
+            bot.send_message(uid, f"<b>Duyuru</b>\n\n{ann}")
             count += 1
-            time.sleep(0.1)
+            time.sleep(0.05)
         except:
             pass
-    bot.reply_to(message, f"✅ Duyuru {count} kullanıcıya gönderildi.")
+    bot.reply_to(message, f"Duyuru {count} kullanıcıya gönderildi.")
 
-@bot.message_handler(commands=['yasakla'])
-def cmd_yasakla(message):
-    chat_id = message.chat.id
-    if chat_id != ADMIN_ID:
+@bot.message_handler(commands=['kanalekle'])
+def cmd_kanalekle(message):
+    if message.chat.id != ADMIN_ID:
+        return
+    args = message.text.split(maxsplit=2)
+    if len(args) < 2:
+        bot.reply_to(
+            message,
+            "Kullanım: <code>/kanalekle KANAL_ID [DAVET_LINKI] [BASLIK]</code>\n"
+            "Örnek: <code>/kanalekle -1004372335776 https://t.me/+abc Kanalim</code>"
+        )
+        return
+    try:
+        channel_id = str(args[1]).strip()
+        invite_link = args[2].strip() if len(args) >= 3 else ""
+        title = ""
+        if " " in invite_link:
+            invite_link, title = invite_link.split(" ", 1)
+        if not invite_link:
+            try:
+                chat = bot.get_chat(channel_id)
+                if getattr(chat, "invite_link", None):
+                    invite_link = chat.invite_link
+                elif getattr(chat, "username", None):
+                    invite_link = f"https://t.me/{chat.username}"
+                title = chat.title or ""
+            except Exception as e:
+                bot.reply_to(message, f"Kanal bilgisi alınamadı: {e}")
+                return
+        _config_db.add_channel(channel_id, invite_link, title)
+        bot.reply_to(message, f"Kanal eklendi.\nID: <code>{channel_id}</code>\nLink: {invite_link}")
+    except Exception as e:
+        bot.reply_to(message, f"Hata: {e}")
+
+@bot.message_handler(commands=['kanalsil'])
+def cmd_kanalsil(message):
+    if message.chat.id != ADMIN_ID:
         return
     args = message.text.split()
     if len(args) < 2:
-        bot.reply_to(message, "❌ Örnek: <code>/yasakla 123456789</code>")
+        bot.reply_to(message, "Örnek: <code>/kanalsil -1004372335776</code>")
+        return
+    _config_db.remove_channel(str(args[1]).strip())
+    bot.reply_to(message, "Kanal silindi.")
+
+@bot.message_handler(commands=['kanallistele'])
+def cmd_kanallistele(message):
+    if message.chat.id != ADMIN_ID:
+        return
+    channels = _config_db.list_channels()
+    if not channels:
+        bot.reply_to(message, "Zorunlu kanal yok.")
+        return
+    lines = ["<b>Zorunlu Kanallar</b>"]
+    for ch in channels:
+        lines.append(f"\nID: <code>{ch['channel_id']}</code>\nLink: {ch['invite_link']}\nBaşlık: {ch['title']}")
+    bot.reply_to(message, "\n".join(lines))
+
+@bot.message_handler(commands=['yasakla'])
+def cmd_yasakla(message):
+    if message.chat.id != ADMIN_ID:
+        return
+    args = message.text.split()
+    if len(args) < 2:
+        bot.reply_to(message, "Örnek: <code>/yasakla 123456789</code>")
         return
     try:
         target = int(args[1])
         _user_settings.set_ban(target, 1)
-        bot.reply_to(message, f"✅ Kullanıcı yasaklandı: <code>{target}</code>")
+        bot.reply_to(message, f"Kullanıcı yasaklandı: <code>{target}</code>")
     except Exception as e:
-        bot.reply_to(message, f"❌ Hata: {e}")
+        bot.reply_to(message, f"Hata: {e}")
 
 @bot.message_handler(commands=['yasakkaldir'])
 def cmd_yasakkaldir(message):
-    chat_id = message.chat.id
-    if chat_id != ADMIN_ID:
+    if message.chat.id != ADMIN_ID:
         return
     args = message.text.split()
     if len(args) < 2:
-        bot.reply_to(message, "❌ Örnek: <code>/yasakkaldir 123456789</code>")
+        bot.reply_to(message, "Örnek: <code>/yasakkaldir 123456789</code>")
         return
     try:
         target = int(args[1])
         _user_settings.set_ban(target, 0)
-        bot.reply_to(message, f"✅ Kullanıcının yasağı kaldırıldı: <code>{target}</code>")
+        bot.reply_to(message, f"Kullanıcının yasağı kaldırıldı: <code>{target}</code>")
     except Exception as e:
-        bot.reply_to(message, f"❌ Hata: {e}")
+        bot.reply_to(message, f"Hata: {e}")
 
-# ─── CALLBACK HANDLER ───
+@bot.message_handler(commands=['bilgi'])
+def cmd_bilgi(message):
+    if message.chat.id != ADMIN_ID:
+        bot.reply_to(message, "Bu komut sadece admin içindir.")
+        return
+    channels = _config_db.list_channels()
+    users_started = len(_user_settings.get_all_started_users())
+    bot.reply_to(
+        message,
+        f"<b>Bot Bilgisi</b>\n\n"
+        f"Zorunlu kanal: {len(channels)}\n"
+        f"Start veren: {users_started}\n"
+        f"Ücretsiz deneme limiti: {FREE_TRIAL_CLONE_LIMIT}\n"
+        f"Premium günlük limit: {PAID_DAILY_CLONE_LIMIT}\n"
+        f"Admin ID: <code>{ADMIN_ID}</code>"
+    )
+
+# ─── CALLBACK ───
 
 @bot.callback_query_handler(func=lambda call: True)
 def handle_callback(call):
     chat_id = call.message.chat.id
     if _user_settings.is_banned(chat_id):
-        bot.answer_callback_query(call.id, "Yasaklandınız!", show_alert=True)
+        bot.answer_callback_query(call.id, "Yasaklandın.", show_alert=True)
         return
 
     session = get_session(chat_id)
@@ -1827,15 +1934,43 @@ def handle_callback(call):
         if new_lang in ("tr", "en", "ru"):
             _user_settings.set_lang(chat_id, new_lang)
             session["lang"] = new_lang
-            ip = get_public_ip() or "0.0.0.0"
-            ok, msg, _ = check_saved_license(chat_id, ip)
-            if ok:
+            ok, reason = check_channel_membership(chat_id)
+            if not ok:
+                reason_type, invite_link = reason
+                try:
+                    bot.edit_message_text(
+                        L(chat_id, "channel_sub_required", channel_url=invite_link),
+                        chat_id, call.message.message_id
+                    )
+                except:
+                    pass
+                return
+            if chat_id == ADMIN_ID:
                 session["key_valid"] = True
-                bot.edit_message_text(L(chat_id, "welcome"), chat_id, call.message.message_id, reply_markup=main_menu_inline(chat_id))
             else:
-                session["key_valid"] = False
-                session["state"] = "waiting_key"
-                bot.edit_message_text(L(chat_id, "key_required", contact=CONTACT_USERNAME), chat_id, call.message.message_id, reply_markup=cancel_inline(chat_id))
+                ip = get_public_ip() or "0.0.0.0"
+                ok2, _, _ = check_saved_license(chat_id, ip)
+                if ok2:
+                    session["key_valid"] = True
+                elif not _user_settings.get_free_trial_used(chat_id):
+                    session["key_valid"] = True
+                    session["is_free"] = True
+                    session["daily_limit"] = FREE_TRIAL_CLONE_LIMIT
+                else:
+                    session["key_valid"] = False
+                    session["state"] = "waiting_key"
+            if session["key_valid"]:
+                try:
+                    bot.edit_message_text(L(chat_id, "welcome"), chat_id, call.message.message_id,
+                                          reply_markup=main_menu_inline(chat_id))
+                except:
+                    pass
+            else:
+                try:
+                    bot.edit_message_text(L(chat_id, "key_required", contact=CONTACT_USERNAME),
+                                          chat_id, call.message.message_id, reply_markup=cancel_inline())
+                except:
+                    pass
         return
 
     if data == "change_lang":
@@ -1847,7 +1982,7 @@ def handle_callback(call):
         if session["key_valid"]:
             bot.edit_message_text(L(chat_id, "cancelled"), chat_id, call.message.message_id, reply_markup=main_menu_inline(chat_id))
         else:
-            bot.edit_message_text(L(chat_id, "cancelled") + "\n/start", chat_id, call.message.message_id, reply_markup=None)
+            bot.edit_message_text(L(chat_id, "cancelled") + "\n/start", chat_id, call.message.message_id)
         return
 
     if data == "back_main":
@@ -1856,33 +1991,43 @@ def handle_callback(call):
         return
 
     if not session["key_valid"]:
-        bot.edit_message_text("Lütfen geçerli bir lisans girin. /start", chat_id, call.message.message_id)
+        bot.edit_message_text("Lisans gerekli. /start", chat_id, call.message.message_id)
         return
 
     if data == "menu_contact":
-        bot.edit_message_text(L(chat_id, "contact_info", contact=CONTACT_USERNAME), chat_id, call.message.message_id, reply_markup=back_main_inline(chat_id))
+        bot.edit_message_text(L(chat_id, "contact_info", contact=CONTACT_USERNAME), chat_id, call.message.message_id, reply_markup=back_main_inline())
         return
 
     if data == "menu_clone":
         if session.get("clone_in_progress"):
-            bot.answer_callback_query(call.id, "⚠️ Devam eden bir clone işlemi var, lütfen bekleyin!", show_alert=True)
+            bot.answer_callback_query(call.id, "Devam eden clone var, bekle.", show_alert=True)
             return
-        daily_count = _user_settings.get_daily_clone_count(chat_id)
-        if chat_id != ADMIN_ID and daily_count >= session["daily_limit"]:
-            bot.edit_message_text(L(chat_id, "daily_limit_reached", limit=session["daily_limit"], contact=CONTACT_USERNAME), chat_id, call.message.message_id, reply_markup=back_main_inline(chat_id))
-            return
+
+        if chat_id != ADMIN_ID:
+            trial_used = _user_settings.get_free_trial_used(chat_id)
+            if session.get("is_free") and not trial_used:
+                pass
+            elif session.get("is_free") and trial_used:
+                bot.edit_message_text(L(chat_id, "trial_used", contact=CONTACT_USERNAME),
+                                      chat_id, call.message.message_id, reply_markup=back_main_inline())
+                session["key_valid"] = False
+                session["state"] = "waiting_key"
+                return
+            else:
+                daily_count = _user_settings.get_daily_clone_count(chat_id)
+                if daily_count >= session["daily_limit"]:
+                    bot.edit_message_text(
+                        L(chat_id, "daily_limit_reached", limit=session["daily_limit"], contact=CONTACT_USERNAME),
+                        chat_id, call.message.message_id, reply_markup=back_main_inline()
+                    )
+                    return
+
         session["state"] = "waiting_clone_email"
         session["clone_results"] = []
-        bot.edit_message_text(L(chat_id, "enter_clone_email"), chat_id, call.message.message_id, reply_markup=cancel_inline(chat_id))
+        bot.edit_message_text(L(chat_id, "enter_clone_email"), chat_id, call.message.message_id, reply_markup=cancel_inline())
         return
 
-    if data == "tool_logout":
-        session.update({"auth": None, "fuid": None, "record": None, "email": None,
-                       "password": None, "name": None, "money": 0, "coin": 0, "state": None})
-        bot.edit_message_text(L(chat_id, "logout_done"), chat_id, call.message.message_id, reply_markup=main_menu_inline(chat_id))
-        return
-
-# ─── METİN MESAJ YAKALAYICI ───
+# ─── TEXT HANDLER ───
 
 @bot.message_handler(func=lambda message: True, content_types=['text'])
 def handle_text(message):
@@ -1897,10 +2042,6 @@ def handle_text(message):
         safe_delete_message(chat_id, message.message_id)
         return
 
-    if not session["key_valid"] and session["state"] != "waiting_key":
-        bot.send_message(chat_id, L(chat_id, "invalid_key", msg="Lisans gerekli", contact=CONTACT_USERNAME) + "\n/start")
-        return
-
     if session["state"] == "waiting_key":
         safe_delete_message(chat_id, message.message_id)
         bot.send_chat_action(chat_id, 'typing')
@@ -1910,11 +2051,11 @@ def handle_text(message):
             _license_db.save(chat_id, text, ip, expires_ms, is_free, daily_limit)
             session["key_valid"] = True
             session["is_free"] = is_free
-            session["daily_limit"] = (2_147_483_647 if chat_id == ADMIN_ID else daily_limit)
+            session["daily_limit"] = daily_limit
             session["state"] = None
             send_welcome_message(chat_id, msg)
         else:
-            m = bot.send_message(chat_id, L(chat_id, "invalid_key", msg=msg, contact=CONTACT_USERNAME), reply_markup=cancel_inline(chat_id))
+            m = bot.send_message(chat_id, L(chat_id, "invalid_key", msg=msg, contact=CONTACT_USERNAME), reply_markup=cancel_inline())
             TEMP_MSG_IDS[chat_id] = m.message_id
         return
 
@@ -1922,7 +2063,7 @@ def handle_text(message):
         safe_delete_message(chat_id, message.message_id)
         session["clone_email"] = text
         session["state"] = "waiting_clone_pass"
-        m = bot.send_message(chat_id, L(chat_id, "enter_clone_pass"), reply_markup=cancel_inline(chat_id))
+        m = bot.send_message(chat_id, L(chat_id, "enter_clone_pass"), reply_markup=cancel_inline())
         TEMP_MSG_IDS[chat_id] = m.message_id
         return
 
@@ -1932,10 +2073,16 @@ def handle_text(message):
         if chat_id in TEMP_MSG_IDS:
             safe_delete_message(chat_id, TEMP_MSG_IDS.pop(chat_id))
         session["state"] = "waiting_clone_count"
-        max_count = session["daily_limit"] - _user_settings.get_daily_clone_count(chat_id)
-        if max_count < 1:
-            max_count = 1
-        m = bot.send_message(chat_id, L(chat_id, "enter_clone_count", max=min(20, max_count)), reply_markup=cancel_inline(chat_id))
+
+        if chat_id == ADMIN_ID:
+            max_count = ADMIN_DAILY_CLONE_LIMIT
+        elif session.get("is_free") and not _user_settings.get_free_trial_used(chat_id):
+            max_count = FREE_TRIAL_CLONE_LIMIT
+        else:
+            remaining = session["daily_limit"] - _user_settings.get_daily_clone_count(chat_id)
+            max_count = max(1, min(20, remaining))
+
+        m = bot.send_message(chat_id, L(chat_id, "enter_clone_count", max=max_count), reply_markup=cancel_inline())
         TEMP_MSG_IDS[chat_id] = m.message_id
         return
 
@@ -1946,14 +2093,20 @@ def handle_text(message):
         try:
             count = int(text)
         except:
-            m = bot.send_message(chat_id, L(chat_id, "enter_number"), reply_markup=cancel_inline(chat_id))
+            m = bot.send_message(chat_id, L(chat_id, "enter_number"), reply_markup=cancel_inline())
             TEMP_MSG_IDS[chat_id] = m.message_id
             return
 
-        remaining = session["daily_limit"] - _user_settings.get_daily_clone_count(chat_id)
-        max_allowed = min(20, remaining)
+        if chat_id == ADMIN_ID:
+            max_allowed = ADMIN_DAILY_CLONE_LIMIT
+        elif session.get("is_free") and not _user_settings.get_free_trial_used(chat_id):
+            max_allowed = FREE_TRIAL_CLONE_LIMIT
+        else:
+            remaining = session["daily_limit"] - _user_settings.get_daily_clone_count(chat_id)
+            max_allowed = max(1, min(20, remaining))
+
         if count < 1 or count > max_allowed:
-            m = bot.send_message(chat_id, L(chat_id, "clone_invalid_count", max=max_allowed), reply_markup=cancel_inline(chat_id))
+            m = bot.send_message(chat_id, L(chat_id, "clone_invalid_count", max=max_allowed), reply_markup=cancel_inline())
             TEMP_MSG_IDS[chat_id] = m.message_id
             return
 
@@ -1961,6 +2114,7 @@ def handle_text(message):
         session["clone_in_progress"] = True
         src_email = session["clone_email"]
         src_pass = session["clone_pass"]
+        is_free_run = session.get("is_free") and not _user_settings.get_free_trial_used(chat_id)
 
         status_msg = bot.send_message(chat_id, L(chat_id, "clone_started", count=count))
         status_msg_id = status_msg.message_id
@@ -1988,7 +2142,7 @@ def handle_text(message):
                 for i in range(total_to_generate):
                     stamp = int(time.time() * 1000)
                     rand_part = random.randint(100000, 999999)
-                    new_email = f"derinclone{stamp}_{i}_{rand_part}@gmail.com"
+                    new_email = f"clone{stamp}_{i}_{rand_part}@gmail.com"
                     new_password = ''.join(random.choice(string.ascii_letters + string.digits) for _ in range(12))
                     new_name = f"Clone_{i+1}_{rand_part}"
 
@@ -2025,13 +2179,18 @@ def handle_text(message):
                     except:
                         continue
 
-                    if i >= 0:
-                        try:
-                            bot.edit_message_text(L(chat_id, "clone_progress", done=len(user_results), total=count), chat_id, status_msg_id)
-                        except:
-                            pass
+                    try:
+                        bot.edit_message_text(L(chat_id, "clone_progress", done=len(user_results), total=count), chat_id, status_msg_id)
+                    except:
+                        pass
 
                 session["clone_in_progress"] = False
+
+                if is_free_run and user_results:
+                    _user_settings.mark_free_trial_used(chat_id)
+                    session["is_free"] = False
+                    session["key_valid"] = False
+                    session["state"] = "waiting_key"
 
                 if not user_results:
                     bot.edit_message_text(L(chat_id, "clone_none"), chat_id, status_msg_id)
@@ -2042,7 +2201,10 @@ def handle_text(message):
                 bio.name = f"cpm_clone_{int(time.time())}.txt"
 
                 bot.edit_message_text(L(chat_id, "clone_done", success=len(user_results), total=count), chat_id, status_msg_id)
-                bot.send_document(chat_id, bio, caption=L(chat_id, "clone_doc_caption", success=len(user_results)), reply_markup=main_menu_inline(chat_id))
+                bot.send_document(chat_id, bio, caption=L(chat_id, "clone_doc_caption", success=len(user_results)))
+
+                if is_free_run:
+                    bot.send_message(chat_id, L(chat_id, "trial_used", contact=CONTACT_USERNAME), reply_markup=cancel_inline())
             except Exception as e:
                 session["clone_in_progress"] = False
                 try:
@@ -2061,7 +2223,7 @@ def handle_text(message):
 
 if __name__ == '__main__':
     print("=" * 60)
-    print("  CPM ULTIMATE TOOL - SAF TELEGRAM BOTU")
+    print("  CPM ACCOUNT STUDIO - Telegram Botu")
     print("=" * 60)
     try:
         _license_db.clear_expired()
@@ -2074,10 +2236,21 @@ if __name__ == '__main__':
     except:
         pass
 
-    print("  Bot aktif ve mesaj dinlemede...")
+    if not _config_db.list_channels():
+        try:
+            _config_db.add_channel(
+                "-1004372335776",
+                "https://t.me/+ryhagfsW9fsyYmE0",
+                "CPM Kanal"
+            )
+            print("Varsayılan zorunlu kanal eklendi.")
+        except Exception as e:
+            print(f"Kanal eklenemedi: {e}")
+
+    print("  Bot aktif. Mesaj bekleniyor...")
     while True:
         try:
             bot.infinity_polling(timeout=30, long_polling_timeout=25, skip_pending=True)
         except Exception as e:
-            print(f"Polling Hatası: {e}")
+            print(f"Polling hatası: {e}")
             time.sleep(10)
